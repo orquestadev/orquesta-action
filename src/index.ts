@@ -56,12 +56,7 @@ async function run(): Promise<void> {
 
     const data = await response.data
 
-    core.debug(`Result: ${JSON.stringify(data)}`)
-    core.debug(`orquestaApiKey: ${orquestaApiKey}`)
-
-    const result = data[orquestaApiKey]
-
-    core.debug(`Result: ${result}`)
+    const result = data[orquestaRuleKey]
 
     core.setOutput('result', result)
   } catch (error: any) {
