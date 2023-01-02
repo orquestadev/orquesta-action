@@ -85,6 +85,7 @@ function run() {
                 }
             });
             const result = yield response.data[orquestaApiKey];
+            core.debug(`Result: ${result}`);
             core.setOutput('result', result);
         }
         catch (error) {

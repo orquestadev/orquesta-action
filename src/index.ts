@@ -56,6 +56,8 @@ async function run(): Promise<void> {
 
     const result = await response.data[orquestaApiKey]
 
+    core.debug(`Result: ${result}`)
+
     core.setOutput('result', result)
   } catch (error: any) {
     const detail = error.response?.data?.detail
