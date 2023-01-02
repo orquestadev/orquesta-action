@@ -84,8 +84,8 @@ function run() {
                     Authorization: `Bearer ${orquestaApiKey}`
                 }
             });
-            const data = yield response.data[orquestaApiKey];
-            core.setOutput('result', data.result);
+            const result = yield response.data[orquestaApiKey];
+            core.setOutput('result', result);
         }
         catch (error) {
             const detail = (_b = (_a = error.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.detail;

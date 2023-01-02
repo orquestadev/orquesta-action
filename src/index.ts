@@ -54,9 +54,9 @@ async function run(): Promise<void> {
       }
     )
 
-    const data = await response.data[orquestaApiKey]
+    const result = await response.data[orquestaApiKey]
 
-    core.setOutput('result', data.result)
+    core.setOutput('result', result)
   } catch (error: any) {
     const detail = error.response?.data?.detail
 
