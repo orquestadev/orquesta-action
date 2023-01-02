@@ -1,11 +1,22 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: Orquesta Rule Evaluation
+description: Evaluate the provided rule using the Orquesta API and return the result as an output
+author: orquestadev
 inputs:
-  milliseconds: # change this
+  apiKey:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'Your  workspace API key'
+  ruleKey:
+    required: true
+    description: 'Your workspace rule key'
+  jsonContext:
+    required: false
+    description: 'The evaluation context as a JSON string'
+  multilineContext:
+    required: false
+    description: 'The evaluation context as a multiline string'
+outputs:
+  result:
+    description: 'Result after evaluation of the provided rule'
 runs:
   using: 'node16'
   main: 'dist/index.js'
