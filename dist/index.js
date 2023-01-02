@@ -85,10 +85,7 @@ function run() {
                 }
             });
             const data = yield response.data;
-            core.debug(`Result: ${JSON.stringify(data)}`);
-            core.debug(orquestaApiKey);
-            const result = yield response.data[`${orquestaApiKey}`];
-            core.debug(`Result: ${result}`);
+            const result = data[orquestaApiKey];
             core.setOutput('result', result);
         }
         catch (error) {
