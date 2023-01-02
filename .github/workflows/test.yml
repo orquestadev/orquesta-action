@@ -1,0 +1,16 @@
+name: Action Test
+
+on:
+  push:
+    branches:
+      - action-test
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          apiKey: RQST.64ab260e9e8c46378d2605c5bbf0004b.S9bXlCzdvQAEybfY5rlBmnLYqVRWy7Wrh3SF-7nKAnA
+          ruleKey: killer_switch
