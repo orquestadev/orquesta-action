@@ -3,7 +3,7 @@
   "version": "1.0",
   "private": true,
   "description": "Official GitHub Action for Orquesta",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
