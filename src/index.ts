@@ -54,7 +54,9 @@ async function run(): Promise<void> {
       }
     )
 
-    core.debug(`Result: ${await response.data}`)
+    const data = await response.data
+
+    core.debug(`Result: ${JSON.stringify(data)}`)
 
     const result = await response.data[orquestaApiKey]
 
