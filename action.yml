@@ -8,12 +8,9 @@ inputs:
   ruleKey:
     required: true
     description: 'Your workspace rule key'
-  jsonContext:
+  context:
     required: false
-    description: 'The evaluation context as a JSON string'
-  multilineContext:
-    required: false
-    description: 'The evaluation context as a multiline string'
+    description: 'Context to be used in the evaluation of the rule. Must be a valid JSON string.'
 outputs:
   result:
     description: 'Result after evaluation of the provided rule'

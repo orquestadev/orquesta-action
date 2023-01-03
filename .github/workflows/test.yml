@@ -1,0 +1,22 @@
+name: Action Test
+
+on:
+  push:
+    branches:
+      - action-test
+
+env:
+  API_KEY: RQST.64ab260e9e8c46378d2605c5bbf0004b.S9bXlCzdvQAEybfY5rlBmnLYqVRWy7Wrh3SF-7nKAnA
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        id: killer_switch
+        with:
+          apiKey: ${{env.API_KEY}}
+          ruleKey: killer_switch
+          context: '{"environments": ["develop"]}'
+      - run: echo ${{ steps.killer_switch.outputs.result }}

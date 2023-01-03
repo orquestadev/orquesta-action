@@ -3,12 +3,13 @@ import axios from 'axios'
 
 const orquestaApiKey = core.getInput('apiKey')
 const orquestaRuleKey = core.getInput('ruleKey')
-const orquestaJsonContext = core.getInput('jsonContext')
-const orquestaMultilineContext = core.getMultilineInput('multilineContext')
+const orquestaContext = core.getInput('context')
 
 const EVALUATION_API_URL = 'https://api.orquesta.dev/evaluate'
 
 async function run(): Promise<void> {
+  core.debug('Checking required inputs...')
+
   const requiredInputs = ['apiKey', 'ruleKey']
 
   for (const inputKey of requiredInputs) {
@@ -18,29 +19,25 @@ async function run(): Promise<void> {
     }
   }
 
+  core.debug('All required inputs are present')
+
   let context = {}
 
-  if (orquestaJsonContext) {
+  core.debug('Checking if context was provided')
+
+  if (orquestaContext) {
     try {
-      context = JSON.parse(orquestaJsonContext)
+      core.debug('Parsing context')
+      context = JSON.parse(orquestaContext)
     } catch (error) {
-      core.setFailed(`Invalid JSON provided for contextAsJson`)
+      core.setFailed(error as Error)
       return
     }
   }
 
-  if (!orquestaJsonContext && orquestaMultilineContext) {
-    context = orquestaMultilineContext.reduce((acc, line) => {
-      const [key, value] = line.split(':')
-
-      return {
-        ...acc,
-        [key]: value
-      }
-    }, {})
-  }
-
   try {
+    core.debug('Sending request to Orquesta Evaluation API...')
+
     const response = await axios.post(
       EVALUATION_API_URL,
       {
@@ -49,14 +46,21 @@ async function run(): Promise<void> {
       },
       {
         headers: {
-          Authorization: `Bearer ${orquestaApiKey}`
+          Authorization: `Bearer ${orquestaApiKey}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-SDK-Version': '@orquestadev/orquesta-action@v1'
         }
       }
     )
 
-    const data = await response.data[orquestaApiKey]
+    const data = await response.data
 
-    core.setOutput('result', data.result)
+    const result = data[orquestaRuleKey]
+
+    core.debug('Rule evaluation result: ${result}')
+
+    core.setOutput('result', result)
   } catch (error: any) {
     const detail = error.response?.data?.detail
 

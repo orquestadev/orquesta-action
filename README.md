@@ -1,105 +1,114 @@
-<p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
-</p>
+## Overview
 
-# Create a JavaScript Action using TypeScript
+This Github action allows you to use [Orquesta](https://orquesta.dev/) rules in your workflows. With this action, you can configure your applications using the remote configurations from Orquesta, enable or disable features or jobs using feature flags, or customize your applications based on different parameters.
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
+### Demo
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.  
+The follow example will use the `api-rate-limit` Orquesta rule of type `number` created in a demo workspaces.
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+<img height="260" alt="image" src="https://user-images.githubusercontent.com/73107451/210444354-64b58da5-5d90-4e93-b87c-e5a214f46000.png">
 
-## Create an action from this template
+#### Usage
 
-Click the `Use this Template` and provide the new repo details for your action
-
-## Code in Main
-
-> First, you'll need to have a reasonably modern version of `node` handy. This won't work with versions older than 9, for instance.
-
-Install the dependencies  
-```bash
-$ npm install
-```
-
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run package
-```
-
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
-```
-
-## Change action.yml
-
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder. 
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-```bash
-$ npm run package
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket: 
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))
+To use this action, create a new workflow in your GitHub repository's `.github/workflows directory` (e.g. `orquesta-action.yml`). Then, copy and paste the following code:
 
 ```yaml
-uses: ./
-with:
-  milliseconds: 1000
+on:
+  push:
+    branches: [main]
+
+jobs:
+  orquesta:
+    runs-on: ubuntu-latest
+    name: Evaluate your Orquesta rule
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: orquestadev/orquesta-action@1.0
+        id: api_rate_limit
+        with:
+          apiKey: ${{secrets.ORQUESTA_API_KEY}}
+          ruleKey: api-rate-limit
+          context: '{"environments": "production", "customer-tier": "freemium"}'
+
+      - name: Use your rule result
+        run: |
+          echo "The result of the rule evaluation is ${{ steps.api_rate_limit.outputs.result }}"
+
+# The result of this operation will be 150, as this is the first row in the table that meets the specified criteria (as shown in the above image). The row 2 is identified as the first row that matches the context provided in the action.
 ```
 
-See the [actions tab](https://github.com/actions/typescript-action/actions) for runs of this action! :rocket:
+You can find your Orquesta API Key in the settings for your Orquesta workspace. We recommend using [GitHub Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) to store your API Key securely.
 
-## Usage:
+### Inputs
 
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
+| input     | required | description                                                                    |
+| --------- | -------- | ------------------------------------------------------------------------------ |
+| `apiKey`  | yes      | Your workspace API key                                                         |
+| `ruleKey` | yes      | Your workspace rule key                                                        |
+| `context` | no       | Context to be used in the evaluation of the rule. Must be a valid JSON string. |
+
+### Examples
+
+Here are some additional examples of how you can use this action:
+
+#### Using a rule of type boolean to disable a job
+
+```yaml
+on:
+  push:
+    branches: [main]
+
+jobs:
+  orquesta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: orquestadev/orquesta-action@1.0
+        id: code_freeze_enabled
+        with:
+          apiKey: ${{secrets.ORQUESTA_API_KEY}}
+          ruleKey: code_freeze_enabled
+          context: '{"environments": "production"}'
+
+      - name: Backend deployment
+        if: steps.code_freeze_enabled.outputs.result == 'false'
+        ...
+```
+
+#### Using a rule of type json to configure your Github actifacts upload
+
+```yaml
+on:
+  push:
+    branches: [main]
+
+jobs:
+  orquesta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: orquestadev/orquesta-action@1.0
+        id: artifacts_config
+        with:
+          apiKey: ${{secrets.ORQUESTA_API_KEY}}
+          ruleKey: artifacts_config
+          context: '{"accountId": "account007", "cloudProvider": "aws"}'
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{fromJSON(steps.artifacts_config.outputs.result)['name']}}
+          path: ${{fromJSON(steps.artifacts_config.outputs.result)['path']}}
+```
+
+### About Orquesta
+
+[Orquesta](https://orquesta.dev/) provides you, as a developer, with a fast and intuitive platform to manage and run all your feature flags, configurations and complex business rules for rapid application development, stress-free operations and smooth orchestration of complex IT landscapes.
