@@ -1,6 +1,6 @@
-name: Orquesta Rule Evaluation
-description: Evaluate the provided rule using the Orquesta API and return the result as an output
-author: orquestadev
+name: 'Orquesta Rule Evaluation'
+description: 'Evaluate the provided rule using the Orquesta API and return the result as an output'
+author: 'Orquesta'
 inputs:
   apiKey:
     required: true
