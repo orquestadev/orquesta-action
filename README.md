@@ -26,7 +26,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: orquestadev/orquesta-action@1.0
+      - uses: orquestadev/orquesta-action@v1
         id: api_rate_limit
         with:
           apiKey: ${{secrets.ORQUESTA_API_KEY}}
@@ -69,7 +69,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: orquestadev/orquesta-action@1.0
+      - uses: orquestadev/orquesta-action@v1
         id: code_freeze_enabled
         with:
           apiKey: ${{secrets.ORQUESTA_API_KEY}}
@@ -96,7 +96,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: orquestadev/orquesta-action@1.0
+      - uses: orquestadev/orquesta-action@v1
         id: artifacts_config
         with:
           apiKey: ${{secrets.ORQUESTA_API_KEY}}
