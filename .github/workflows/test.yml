@@ -5,6 +5,9 @@ on:
     branches:
       - action-test
 
+env:
+  API_KEY: RQST.64ab260e9e8c46378d2605c5bbf0004b.S9bXlCzdvQAEybfY5rlBmnLYqVRWy7Wrh3SF-7nKAnA
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,7 +16,35 @@ jobs:
       - uses: ./
         id: killer_switch
         with:
-          apiKey: RQST.64ab260e9e8c46378d2605c5bbf0004b.S9bXlCzdvQAEybfY5rlBmnLYqVRWy7Wrh3SF-7nKAnA
+          apiKey: ${{env.API_KEY}}
           ruleKey: killer_switch
+      - run: echo ${{ steps.killer_switch.outputs.result == 'false' }}
 
-      - run: echo ${{ steps.killer_switch.outputs.result}}
+      - uses: ./
+        id: jsonrule
+        with:
+          apiKey: ${{env.API_KEY}}
+          ruleKey: jsonrule
+      - run: echo ${{fromJSON(steps.jsonrule.outputs.result)['database']['cdk']}}
+      - run: echo ${{fromJSON(steps.jsonrule.outputs.result)}}
+
+      - uses: ./
+        id: numberrule
+        with:
+          apiKey: ${{env.API_KEY}}
+          ruleKey: numberrule
+      - run: echo ${{ steps.numberrule.outputs.result }}
+
+      - uses: ./
+        id: stringrule
+        with:
+          apiKey: ${{env.API_KEY}}
+          ruleKey: stringrule
+      - run: echo ${{ steps.stringrule.outputs.result}}
+
+      - uses: ./
+        id: arrayrule
+        with:
+          apiKey: ${{env.API_KEY}}
+          ruleKey: arrayrule
+      - run: echo ${{ fromJSON(steps.arrayrule.outputs.result)[1]}}

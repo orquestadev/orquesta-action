@@ -46,7 +46,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const axios_1 = __importDefault(__nccwpck_require__(1441));
 const orquestaApiKey = core.getInput('apiKey');
 const orquestaRuleKey = core.getInput('ruleKey');
-const orquestaJsonContext = core.getInput('jsonContext');
+const orquestaJsonContext = core.getInput('context');
 const orquestaMultilineContext = core.getMultilineInput('multilineContext');
 const EVALUATION_API_URL = 'https://api.orquesta.dev/evaluate';
 function run() {
@@ -60,6 +60,8 @@ function run() {
             }
         }
         let context = {};
+        core.info('🚀🚀🚀🚀🚀🚀 PArsing JSON');
+        core.info(orquestaJsonContext);
         if (orquestaJsonContext) {
             try {
                 context = JSON.parse(orquestaJsonContext);
@@ -81,7 +83,10 @@ function run() {
                 context
             }, {
                 headers: {
-                    Authorization: `Bearer ${orquestaApiKey}`
+                    Authorization: `Bearer ${orquestaApiKey}`,
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-SDK-Version': '@orquestadev/orquesta-action@v1'
                 }
             });
             const data = yield response.data;

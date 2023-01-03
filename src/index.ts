@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const orquestaApiKey = core.getInput('apiKey')
 const orquestaRuleKey = core.getInput('ruleKey')
-const orquestaJsonContext = core.getInput('jsonContext')
+const orquestaJsonContext = core.getInput('context')
 const orquestaMultilineContext = core.getMultilineInput('multilineContext')
 
 const EVALUATION_API_URL = 'https://api.orquesta.dev/evaluate'
@@ -19,6 +19,9 @@ async function run(): Promise<void> {
   }
 
   let context = {}
+
+  core.info('🚀🚀🚀🚀🚀🚀 PArsing JSON')
+  core.info(orquestaJsonContext)
 
   if (orquestaJsonContext) {
     try {
@@ -49,7 +52,10 @@ async function run(): Promise<void> {
       },
       {
         headers: {
-          Authorization: `Bearer ${orquestaApiKey}`
+          Authorization: `Bearer ${orquestaApiKey}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-SDK-Version': '@orquestadev/orquesta-action@v1'
         }
       }
     )
